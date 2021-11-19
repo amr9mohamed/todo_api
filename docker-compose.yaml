@@ -1,0 +1,38 @@
+version: "3"
+services:
+  todo_api:
+    container_name: todo_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - todo-postgres
+    networks:
+      - backend
+  todo-postgres:
+    image: postgres:latest
+    container_name: todo_postgres
+    environment:
+      - POSTGRES_USER=amrmohamed
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=users
+      - DATABASE_HOST=go-postgres
+    ports:
+      - 5432:5432
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - backend
+
+volumes:
+  api: null
+  database_postgres:
+
+    null # Networks to be created to facilitate communication between containers
+networks:
+  backend:
+    driver: bridge
