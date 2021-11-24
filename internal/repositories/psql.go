@@ -15,7 +15,7 @@ type Psql struct {
 }
 
 func NewPsqlDB(Dbdriver, DbUser, DbPassword, DbPort, DbHost, DbName string) *Psql {
-	DBURL := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", DbHost, DbPort, DbUser, DbName, DbPassword)
+	DBURL := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", DbHost, DbUser, DbPassword, DbName, DbPort)
 	db, err := gorm.Open(postgres.Open(DBURL), &gorm.Config{})
 	if err != nil {
 		log.Fatal("failed to connect to database")

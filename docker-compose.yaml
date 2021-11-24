@@ -19,8 +19,7 @@ services:
     environment:
       - POSTGRES_USER=amrmohamed
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=users
-      - DATABASE_HOST=go-postgres
+      - POSTGRES_DB=todos
     ports:
       - 5432:5432
     volumes:
