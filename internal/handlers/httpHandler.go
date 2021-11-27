@@ -42,11 +42,13 @@ func (h *HTTPHandler) Delete(c *gin.Context) {
 
 func (h *HTTPHandler) Add(c *gin.Context) {
 	body := domain.Todo{}
-	if err := c.BindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.IndentedJSON(http.StatusUnprocessableEntity, err)
+		return
 	}
 	if err := h.todoService.Add(body); err != nil {
 		c.IndentedJSON(http.StatusConflict, err.Error())
+		return
 	}
 	c.IndentedJSON(http.StatusNoContent, nil)
 }
@@ -59,7 +61,7 @@ func (h *HTTPHandler) Edit(c *gin.Context) {
 		return
 	}
 	body := domain.Todo{}
-	if err := c.BindJSON(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.IndentedJSON(http.StatusUnprocessableEntity, err)
 		return
 	}
