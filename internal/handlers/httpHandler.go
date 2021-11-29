@@ -33,7 +33,7 @@ func (h *HTTPHandler) Get(c *gin.Context) {
 }
 
 func (h *HTTPHandler) List(c *gin.Context) {
-	todos, err:= h.todoService.List()
+	todos, err := h.todoService.List()
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, todos)
 		return
@@ -61,7 +61,7 @@ func (h *HTTPHandler) Add(c *gin.Context) {
 		return
 	}
 	if err := h.todoService.Add(body); err != nil {
-		c.IndentedJSON(http.StatusConflict, err.Error())
+		c.IndentedJSON(http.StatusConflict, gin.H{"error": "duplicate ID or title"})
 		return
 	}
 	c.IndentedJSON(http.StatusNoContent, nil)

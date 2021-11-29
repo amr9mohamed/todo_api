@@ -8,8 +8,9 @@ import (
 
 func TestNewTodo(t *testing.T) {
 	t.Run("test create todo", func(t *testing.T) {
-		todo := NewTodo(1, "Hello world", true)
+		todo := NewTodo(1, "Greeting", "Hello world", true)
 		assert.Equal(t, uint64(1), todo.ID)
+		assert.Equal(t, "Greeting", todo.Title)
 		assert.Equal(t, "Hello world", todo.Description)
 		assert.Equal(t, true, todo.Completed)
 	})
