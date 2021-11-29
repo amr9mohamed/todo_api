@@ -45,7 +45,7 @@ func TestList(t *testing.T) {
 		assert.Equal(t, todos, resTodos)
 	})
 	t.Run("return error", func(t *testing.T) {
-		var todos  []domain.Todo
+		var todos []domain.Todo
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/todo", nil)
 		mockFunc := func() { mockService.On("List").Return(todos, errors.New("error")).Once() }
@@ -67,7 +67,7 @@ func TestGet(t *testing.T) {
 	router.GET("/todo/:id", handler.Get)
 
 	t.Run("test get api", func(t *testing.T) {
-		todo := domain.NewTodo(1, "Hello world", true)
+		todo := domain.NewTodo(1, "Greet", "Hello world", true)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/todo/1", nil)
 		mockFunc := func() { mockService.On("Get", uint64(1)).Return(todo, nil).Once() }
@@ -94,6 +94,20 @@ func TestGet(t *testing.T) {
 		assert.Equal(t, 404, w.Code)
 		assert.Equal(t, todo, resTodo)
 	})
+	t.Run("can't bind ID", func(t *testing.T) {
+		todo := domain.Todo{}
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/todo/amr", nil)
+		mockFunc := func() { mockService.On("Get", uint64(1)).Return(todo, errors.New("error")).Once() }
+		mockFunc()
+		router.ServeHTTP(w, req)
+		var resTodo domain.Todo
+		if err := json.Unmarshal(w.Body.Bytes(), &resTodo); err != nil {
+			return
+		}
+		assert.Equal(t, 422, w.Code)
+		assert.Equal(t, todo, resTodo)
+	})
 }
 
 func TestDelete(t *testing.T) {
@@ -118,6 +132,14 @@ func TestDelete(t *testing.T) {
 		router.ServeHTTP(w, req)
 		assert.Equal(t, 404, w.Code)
 	})
+	t.Run("can't bind ID", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("DELETE", "/todo/amr", nil)
+		mockFunc := func() { mockService.On("Delete", uint64(1)).Return(nil).Once() }
+		mockFunc()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, 422, w.Code)
+	})
 }
 
 func TestAdd(t *testing.T) {
@@ -127,7 +149,7 @@ func TestAdd(t *testing.T) {
 	router.POST("/todo", handler.Add)
 
 	t.Run("Should add", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		bytesTodo, _ := json.Marshal(todo)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", "/todo", strings.NewReader(string(bytesTodo)))
@@ -137,7 +159,7 @@ func TestAdd(t *testing.T) {
 		assert.Equal(t, 204, w.Code)
 	})
 	t.Run("should return err", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		bytesTodo, _ := json.Marshal(todo)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", "/todo", strings.NewReader(string(bytesTodo)))
@@ -147,7 +169,7 @@ func TestAdd(t *testing.T) {
 		assert.Equal(t, 409, w.Code)
 	})
 	t.Run("not well structured", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello", false)
+		todo := domain.NewTodo(1, "Greet", "hello", false)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("POST", "/todo", nil)
 		mockFunc := func() { mockService.On("Add", todo).Return(errors.New("error")).Once() }
@@ -164,7 +186,7 @@ func TestEdit(t *testing.T) {
 	router.PATCH("/todo/:id", handler.Edit)
 
 	t.Run("Should return error could not edit", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		bytesTodo, _ := json.Marshal(todo)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
@@ -177,7 +199,7 @@ func TestEdit(t *testing.T) {
 		assert.Equal(t, 400, w.Code)
 	})
 	t.Run("should return err not found", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		bytesTodo, _ := json.Marshal(todo)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
@@ -190,7 +212,7 @@ func TestEdit(t *testing.T) {
 		assert.Equal(t, 404, w.Code)
 	})
 	t.Run("not well structured", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", nil)
 		mockFunc := func() {
@@ -202,7 +224,7 @@ func TestEdit(t *testing.T) {
 		assert.Equal(t, 422, w.Code)
 	})
 	t.Run("Should edit", func(t *testing.T) {
-		todo := domain.NewTodo(1, "hello world", true)
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
 		bytesTodo, _ := json.Marshal(todo)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
@@ -213,5 +235,18 @@ func TestEdit(t *testing.T) {
 		mockFunc()
 		router.ServeHTTP(w, req)
 		assert.Equal(t, 204, w.Code)
+	})
+	t.Run("can't bind ID", func(t *testing.T) {
+		todo := domain.NewTodo(1, "Greet", "hello world", true)
+		bytesTodo, _ := json.Marshal(todo)
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("PATCH", "/todo/amr", strings.NewReader(string(bytesTodo)))
+		mockFunc := func() {
+			mockService.On("Get", uint64(1)).Return(todo, nil).Once()
+			mockService.On("Edit", uint64(1), todo).Return(nil).Once()
+		}
+		mockFunc()
+		router.ServeHTTP(w, req)
+		assert.Equal(t, 422, w.Code)
 	})
 }

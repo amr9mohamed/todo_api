@@ -51,7 +51,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"description\": \"1234\",\n    \"completed\": true\n}",
+					"raw": "{\n    \"id\": 3,\n    \"title\": \"Play\",\n    \"description\": \"weekend football game\",\n    \"completed\": false\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -73,12 +73,21 @@
 			"response": []
 		},
 		{
-			"name": "delete a todo by id",
+			"name": "edit a todo by id",
 			"request": {
-				"method": "DELETE",
+				"method": "PATCH",
 				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"title\": \"Play\",\n    \"description\": \"Playsation in the weekend\",\n    \"completed\": false\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
 				"url": {
-					"raw": "http://localhost:8080/todo/6",
+					"raw": "http://localhost:8080/todo/3",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -86,26 +95,17 @@
 					"port": "8080",
 					"path": [
 						"todo",
-						"6"
+						"3"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "edit a todo by id",
+			"name": "delete a todo by id",
 			"request": {
-				"method": "PATCH",
+				"method": "DELETE",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n    \"description\": \"write tests\",\n    \"completed\": true\n}",
-					"options": {
-						"raw": {
-							"language": "json"
-						}
-					}
-				},
 				"url": {
 					"raw": "http://localhost:8080/todo/3",
 					"protocol": "http",
