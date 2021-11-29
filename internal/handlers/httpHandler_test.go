@@ -34,7 +34,7 @@ func TestList(t *testing.T) {
 		}
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/todo", nil)
-		mockFunc := func() { mockService.On("List").Return(todos).Once() }
+		mockFunc := func() { mockService.On("List").Return(todos, nil).Once() }
 		mockFunc()
 		router.ServeHTTP(w, req)
 		var resTodos []domain.Todo
@@ -42,6 +42,20 @@ func TestList(t *testing.T) {
 			return
 		}
 		assert.Equal(t, 200, w.Code)
+		assert.Equal(t, todos, resTodos)
+	})
+	t.Run("return error", func(t *testing.T) {
+		var todos  []domain.Todo
+		w := httptest.NewRecorder()
+		req, _ := http.NewRequest("GET", "/todo", nil)
+		mockFunc := func() { mockService.On("List").Return(todos, errors.New("error")).Once() }
+		mockFunc()
+		router.ServeHTTP(w, req)
+		var resTodos []domain.Todo
+		if err := json.Unmarshal(w.Body.Bytes(), &resTodos); err != nil {
+			return
+		}
+		assert.Equal(t, 404, w.Code)
 		assert.Equal(t, todos, resTodos)
 	})
 }

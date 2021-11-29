@@ -33,7 +33,11 @@ func (h *HTTPHandler) Get(c *gin.Context) {
 }
 
 func (h *HTTPHandler) List(c *gin.Context) {
-	todos := h.todoService.List()
+	todos, err:= h.todoService.List()
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, todos)
+		return
+	}
 	c.IndentedJSON(http.StatusOK, todos)
 }
 

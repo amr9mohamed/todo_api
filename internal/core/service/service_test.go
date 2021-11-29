@@ -64,6 +64,7 @@ func TestList(t *testing.T) {
 
 	type want struct {
 		todos []domain.Todo
+		err error
 	}
 
 	todos := []domain.Todo{
@@ -86,16 +87,23 @@ func TestList(t *testing.T) {
 	}{
 		{
 			name: "list all todo",
-			want: want{todos: todos},
+			want: want{todos: todos, err: nil},
 			mockFunc: func() {
-				mockRepo.On("List").Return(todos).Once()
+				mockRepo.On("List").Return(todos, nil).Once()
 			},
 		},
 		{
 			name: "return empty list",
-			want: want{todos: []domain.Todo{}},
+			want: want{todos: []domain.Todo{}, err: nil},
 			mockFunc: func() {
-				mockRepo.On("List").Return([]domain.Todo{}).Once()
+				mockRepo.On("List").Return([]domain.Todo{}, nil).Once()
+			},
+		},
+		{
+			name: "return error",
+			want: want{todos: []domain.Todo{}, err: errors.New("error")},
+			mockFunc: func() {
+				mockRepo.On("List").Return([]domain.Todo{}, errors.New("error")).Once()
 			},
 		},
 	}
@@ -103,9 +111,10 @@ func TestList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mockFunc()
-			todos := service.List()
-			expected := tt.want.todos
-			assert.Equal(t, expected, todos)
+			todos, err := service.List()
+			expected := tt.want
+			assert.Equal(t, expected.todos, todos)
+			assert.Equal(t, expected.err, err)
 		})
 	}
 }

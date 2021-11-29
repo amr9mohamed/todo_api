@@ -24,8 +24,9 @@ func (s *service) Get(id uint64) (domain.Todo, error) {
 	return todo, nil
 }
 
-func (s *service) List() []domain.Todo {
-	return s.todoRepository.List()
+func (s *service) List() ([]domain.Todo, error) {
+	todos, err := s.todoRepository.List()
+	return todos, err
 }
 
 func (s *service) Delete(id uint64) error {

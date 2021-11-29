@@ -39,13 +39,13 @@ func (db *Psql) Get(id uint64) (domain.Todo, error) {
 	return todo, nil
 }
 
-func (db *Psql) List() []domain.Todo {
+func (db *Psql) List() ([]domain.Todo, error) {
 	var todos []domain.Todo
 	err := db.Debug().Model(&domain.Todo{}).Limit(250).Find(&todos).Error
 	if err != nil {
-		return []domain.Todo{}
+		return []domain.Todo{}, err
 	}
-	return todos
+	return todos, nil
 }
 
 func (db *Psql) Delete(id uint64) error {

@@ -23,8 +23,8 @@ func (s *stubStorage) Get(id uint64) (domain.Todo, error) {
 	return domain.Todo{}, errors.New("todo not found")
 }
 
-func (s *stubStorage) List() []domain.Todo {
-	return s.todos
+func (s *stubStorage) List() ([]domain.Todo,error) {
+	return s.todos, nil
 }
 
 func (s *stubStorage) Delete(id uint64) error {
