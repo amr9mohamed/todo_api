@@ -27,11 +27,11 @@ func (_m *TodoService) Add(_a0 domain.Todo) error {
 }
 
 // Delete provides a mock function with given fields: id
-func (_m *TodoService) Delete(id string) error {
+func (_m *TodoService) Delete(id uint64) error {
 	ret := _m.Called(id)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string) error); ok {
+	if rf, ok := ret.Get(0).(func(uint64) error); ok {
 		r0 = rf(id)
 	} else {
 		r0 = ret.Error(0)
@@ -41,11 +41,11 @@ func (_m *TodoService) Delete(id string) error {
 }
 
 // Edit provides a mock function with given fields: id, editedTodo
-func (_m *TodoService) Edit(id string, editedTodo domain.Todo) error {
+func (_m *TodoService) Edit(id uint64, editedTodo domain.Todo) error {
 	ret := _m.Called(id, editedTodo)
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, domain.Todo) error); ok {
+	if rf, ok := ret.Get(0).(func(uint64, domain.Todo) error); ok {
 		r0 = rf(id, editedTodo)
 	} else {
 		r0 = ret.Error(0)
@@ -55,18 +55,18 @@ func (_m *TodoService) Edit(id string, editedTodo domain.Todo) error {
 }
 
 // Get provides a mock function with given fields: id
-func (_m *TodoService) Get(id string) (domain.Todo, error) {
+func (_m *TodoService) Get(id uint64) (domain.Todo, error) {
 	ret := _m.Called(id)
 
 	var r0 domain.Todo
-	if rf, ok := ret.Get(0).(func(string) domain.Todo); ok {
+	if rf, ok := ret.Get(0).(func(uint64) domain.Todo); ok {
 		r0 = rf(id)
 	} else {
 		r0 = ret.Get(0).(domain.Todo)
 	}
 
 	var r1 error
-	if rf, ok := ret.Get(1).(func(string) error); ok {
+	if rf, ok := ret.Get(1).(func(uint64) error); ok {
 		r1 = rf(id)
 	} else {
 		r1 = ret.Error(1)

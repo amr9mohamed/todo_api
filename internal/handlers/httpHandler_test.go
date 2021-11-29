@@ -56,7 +56,7 @@ func TestGet(t *testing.T) {
 		todo := domain.NewTodo(1, "Hello world", true)
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/todo/1", nil)
-		mockFunc := func() { mockService.On("Get", "1").Return(todo, nil).Once() }
+		mockFunc := func() { mockService.On("Get", uint64(1)).Return(todo, nil).Once() }
 		mockFunc()
 		router.ServeHTTP(w, req)
 		var resTodo domain.Todo
@@ -70,7 +70,7 @@ func TestGet(t *testing.T) {
 		todo := domain.Todo{}
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("GET", "/todo/1", nil)
-		mockFunc := func() { mockService.On("Get", "1").Return(todo, errors.New("error")).Once() }
+		mockFunc := func() { mockService.On("Get", uint64(1)).Return(todo, errors.New("error")).Once() }
 		mockFunc()
 		router.ServeHTTP(w, req)
 		var resTodo domain.Todo
@@ -91,7 +91,7 @@ func TestDelete(t *testing.T) {
 	t.Run("Should delete ", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("DELETE", "/todo/1", nil)
-		mockFunc := func() { mockService.On("Delete", "1").Return(nil).Once() }
+		mockFunc := func() { mockService.On("Delete", uint64(1)).Return(nil).Once() }
 		mockFunc()
 		router.ServeHTTP(w, req)
 		assert.Equal(t, 200, w.Code)
@@ -99,7 +99,7 @@ func TestDelete(t *testing.T) {
 	t.Run("should return error", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("DELETE", "/todo/1", nil)
-		mockFunc := func() { mockService.On("Delete", "1").Return(errors.New("err")).Once() }
+		mockFunc := func() { mockService.On("Delete", uint64(1)).Return(errors.New("err")).Once() }
 		mockFunc()
 		router.ServeHTTP(w, req)
 		assert.Equal(t, 404, w.Code)
@@ -155,8 +155,8 @@ func TestEdit(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
 		mockFunc := func() {
-			mockService.On("Get", "1").Return(todo, nil).Once()
-			mockService.On("Edit", "1", todo).Return(errors.New("error")).Once()
+			mockService.On("Get", uint64(1)).Return(todo, nil).Once()
+			mockService.On("Edit", uint64(1), todo).Return(errors.New("error")).Once()
 		}
 		mockFunc()
 		router.ServeHTTP(w, req)
@@ -168,8 +168,8 @@ func TestEdit(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
 		mockFunc := func() {
-			mockService.On("Get", "1").Return(todo, errors.New("error")).Once()
-			mockService.On("Edit", "1", todo).Return(nil).Once()
+			mockService.On("Get", uint64(1)).Return(todo, errors.New("error")).Once()
+			mockService.On("Edit", uint64(1), todo).Return(nil).Once()
 		}
 		mockFunc()
 		router.ServeHTTP(w, req)
@@ -180,8 +180,8 @@ func TestEdit(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", nil)
 		mockFunc := func() {
-			mockService.On("Get", "1").Return(todo, nil).Once()
-			mockService.On("Edit", "1", todo).Return(nil).Once()
+			mockService.On("Get", uint64(1)).Return(todo, nil).Once()
+			mockService.On("Edit", uint64(1), todo).Return(nil).Once()
 		}
 		mockFunc()
 		router.ServeHTTP(w, req)
@@ -193,8 +193,8 @@ func TestEdit(t *testing.T) {
 		w := httptest.NewRecorder()
 		req, _ := http.NewRequest("PATCH", "/todo/1", strings.NewReader(string(bytesTodo)))
 		mockFunc := func() {
-			mockService.On("Get", "1").Return(todo, nil).Once()
-			mockService.On("Edit", "1", todo).Return(nil).Once()
+			mockService.On("Get", uint64(1)).Return(todo, nil).Once()
+			mockService.On("Edit", uint64(1), todo).Return(nil).Once()
 		}
 		mockFunc()
 		router.ServeHTTP(w, req)

@@ -18,7 +18,7 @@ func TestGet(t *testing.T) {
 	}
 
 	type args struct {
-		id string
+		id uint64
 	}
 
 	todo := domain.Todo{
@@ -35,13 +35,13 @@ func TestGet(t *testing.T) {
 	}{
 		{
 			name:     "should get successfully",
-			args:     args{id: "1"},
+			args:     args{id: 1},
 			want:     want{todo: todo, err: nil},
 			mockFunc: func() { mockRepo.On("Get", uint64(1)).Return(todo, nil) },
 		},
 		{
 			name:     "should return empty todo and err",
-			args:     args{id: "2"},
+			args:     args{id: 2},
 			want:     want{todo: domain.Todo{}, err: errors.New("todo not found")},
 			mockFunc: func() { mockRepo.On("Get", uint64(2)).Return(domain.Todo{}, errors.New("todo not found")) },
 		},
@@ -114,7 +114,7 @@ func TestDelete(t *testing.T) {
 	mockRepo, service := setUp()
 
 	type args struct {
-		id string
+		id uint64
 	}
 
 	type want struct {
@@ -129,7 +129,7 @@ func TestDelete(t *testing.T) {
 	}{
 		{
 			name: "found and deleted",
-			args: args{id: "1"},
+			args: args{id: 1},
 			want: want{err: nil},
 			mockFunc: func() {
 				mockRepo.On("Delete", uint64(1)).Return(nil).Once()
@@ -137,7 +137,7 @@ func TestDelete(t *testing.T) {
 		},
 		{
 			name: "not found and should return error",
-			args: args{id: "1"},
+			args: args{id: 1},
 			want: want{err: errors.New("error")},
 			mockFunc: func() {
 				mockRepo.On("Delete", uint64(1)).Return(errors.New("error")).Once()
@@ -210,7 +210,7 @@ func TestEdit(t *testing.T) {
 	mockRepo, service := setUp()
 
 	type args struct {
-		id string
+		id   uint64
 		todo domain.Todo
 	}
 
@@ -219,20 +219,20 @@ func TestEdit(t *testing.T) {
 	}
 
 	todo := domain.Todo{
-		ID: 1,
+		ID:          1,
 		Description: "Hello world",
-		Completed: true,
+		Completed:   true,
 	}
 
-	tests := []struct{
-		name string
-		args args
-		want want
+	tests := []struct {
+		name     string
+		args     args
+		want     want
 		mockFunc func()
 	}{
 		{
 			name: "return nil",
-			args: args{id: "1", todo: todo},
+			args: args{id: 1, todo: todo},
 			want: want{err: nil},
 			mockFunc: func() {
 				mockRepo.On("Edit", uint64(1), todo).Return(nil).Once()
@@ -240,7 +240,7 @@ func TestEdit(t *testing.T) {
 		},
 		{
 			name: "return error",
-			args: args{id: "1", todo: todo},
+			args: args{id: 1, todo: todo},
 			want: want{err: errors.New("error")},
 			mockFunc: func() {
 				mockRepo.On("Edit", uint64(1), todo).Return(errors.New("error")).Once()

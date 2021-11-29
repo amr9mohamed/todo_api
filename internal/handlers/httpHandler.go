@@ -19,7 +19,12 @@ func NewHTTPHandler(todoService ports.TodoService) *HTTPHandler {
 }
 
 func (h *HTTPHandler) Get(c *gin.Context) {
-	todo, err := h.todoService.Get(c.Param("id"))
+	var todo domain.Todo
+	if err := c.ShouldBindUri(&todo); err != nil {
+		c.IndentedJSON(http.StatusUnprocessableEntity, err)
+		return
+	}
+	todo, err := h.todoService.Get(todo.ID)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
@@ -33,7 +38,12 @@ func (h *HTTPHandler) List(c *gin.Context) {
 }
 
 func (h *HTTPHandler) Delete(c *gin.Context) {
-	if err := h.todoService.Delete(c.Param("id")); err != nil {
+	var todo domain.Todo
+	if err := c.ShouldBindUri(&todo); err != nil {
+		c.IndentedJSON(http.StatusUnprocessableEntity, err)
+		return
+	}
+	if err := h.todoService.Delete(todo.ID); err != nil {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": err.Error()})
 		return
 	}
@@ -54,18 +64,23 @@ func (h *HTTPHandler) Add(c *gin.Context) {
 }
 
 func (h *HTTPHandler) Edit(c *gin.Context) {
-	id := c.Param("id")
-	_, err := h.todoService.Get(id)
+	var todo domain.Todo
+	if err := c.ShouldBindUri(&todo); err != nil {
+		c.IndentedJSON(http.StatusUnprocessableEntity, err)
+		return
+	}
+	_, err := h.todoService.Get(todo.ID)
 	if err != nil {
 		c.IndentedJSON(http.StatusNotFound, err.Error())
 		return
 	}
 	body := domain.Todo{}
+	body.ID = todo.ID
 	if err := c.ShouldBindJSON(&body); err != nil {
 		c.IndentedJSON(http.StatusUnprocessableEntity, err)
 		return
 	}
-	if err := h.todoService.Edit(id, body); err != nil {
+	if err := h.todoService.Edit(todo.ID, body); err != nil {
 		c.IndentedJSON(http.StatusBadRequest, err.Error())
 		return
 	}
